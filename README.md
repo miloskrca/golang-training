@@ -115,8 +115,6 @@ All downloaded packages end up in `$GOPATH/src`. They are also automatically bui
 go get -d github.com/user/package
 ```
 
-Note: Flamingo uses `dep`.
-
 ## Dep
 
 ```sh
