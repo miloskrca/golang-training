@@ -1,0 +1,66 @@
+// advanced-middleware.go
+package main
+
+import (
+	"fmt"
+	"log"
+	"net/http"
+	"time"
+)
+
+type Middleware func(http.HandlerFunc) http.HandlerFunc
+
+// Logging logs all requests with its path and the time it took to process
+func Logging(f http.HandlerFunc) http.HandlerFunc {
+	// Define the http.HandlerFunc
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Do middleware things
+		start := time.Now()
+		defer func() { log.Println(r.URL.Path, time.Since(start)) }()
+		// Call the next middleware/handler in chain
+		f(w, r)
+	}
+}
+
+// Method ensures that url can only be requested with a specific method, else returns a 400 Bad Request
+func Method(m string) Middleware {
+	// Create a new Middleware
+	return func(f http.HandlerFunc) http.HandlerFunc {
+		// Define the http.HandlerFunc
+		return func(w http.ResponseWriter, r *http.Request) {
+			// Do middleware things
+			if r.Method != m {
+				http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+				return
+			}
+			// Call the next middleware/handler in chain
+			f(w, r)
+		}
+	}
+}
+
+// Chain applies middlewares to a http.HandlerFunc
+func Chain(f http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
+	for _, m := range middlewares {
+		f = m(f)
+	}
+	return f
+}
+
+// func Chain(outer Middleware, others ...Middleware) Middleware {
+// 	return func(next http.HandlerFunc) http.HandlerFunc {
+// 		for i := len(others) - 1; i >= 0; i-- { // reverse
+// 			next = others[i](next)
+// 		}
+// 		return outer(next)
+// 	}
+// }
+
+func Hello(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "hello world")
+}
+
+func main() {
+	http.HandleFunc("/", Chain(Hello, Method("GET"), Logging))
+	http.ListenAndServe(":8080", nil)
+}
