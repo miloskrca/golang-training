@@ -1,0 +1,11 @@
+version: '3'
+services:
+  rabbitmq:
+    image: "rabbitmq:3.6.16-management-alpine"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_DEFAULT_VHOST=performance
+    ports:
+      - "5672:5672"
+      - "8080:15672"
