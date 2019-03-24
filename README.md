@@ -1,11 +1,11 @@
 # Go training
 
 This repository is divided into directories:
-* [`beginner`](#beginner) - focuses on basics of the Go language.
-* [`advanced`](#advanced) - focuses on more advanced features of the Go language.
-* [`performance`](#performance) - focuses on showing performance differences in implementations using benchmarks.
-* [`gotcha`](#gotcha) - shows a couple of common mistakes made by developers new to Go.
-* [`random`](#random) - a collection of examples collected from around the internet in no particular grouping
+* [`beginner`](beginner/README.md) - focuses on basics of the Go language.
+* [`advanced`](advanced/README.md) - focuses on more advanced features of the Go language.
+* [`performance`](performance/README.md) - focuses on showing performance differences in implementations using benchmarks.
+* [`gotcha`](gotcha/README.md) - shows a couple of common mistakes made by developers new to Go.
+* [`random`](random/README.md) - a collection of examples collected from around the internet in no particular grouping
 
 ## Intro
 
