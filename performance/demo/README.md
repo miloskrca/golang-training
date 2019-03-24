@@ -1,10 +1,10 @@
 # Performance demo
 
 ## Commands
-`make setup` - run RabbitMQ
-`make run` - run the app
-`make load` - run the requests
-`make consume` - run the consumer that reads from RabbitMQ and displays the number of messages
+* `make setup` - run RabbitMQ
+* `make run` - run the app
+* `make load` - run the requests
+* `make consume` - run the consumer that reads from RabbitMQ and displays the number of messages
 
 ## Architecture
 
@@ -25,6 +25,8 @@
 }
 
 ## Status
+
+Output shown by the consumer:
 
 ```
 client_6 received messages: 12
