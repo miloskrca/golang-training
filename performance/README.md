@@ -6,4 +6,4 @@ Every directory here contains a couple of benchmarks demonstrating the performan
 
 Run the benchmarks by executing `go test -gcflags '-l' -bench=.`.
 
-The [`demo`](demo/README.md) directory contains a demo application that demonstrates a RabbitMQ integration and processing using workers.
+The [`demo`](demo) directory contains a demo application that demonstrates a RabbitMQ integration and processing using workers.
