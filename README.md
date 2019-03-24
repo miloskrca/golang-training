@@ -1,11 +1,22 @@
-## Environment variables
+# Go training
+
+This repository is divided into directories:
+* [`beginner`](#beginner) - focuses on basics of the Go language.
+* [`advanced`](#advanced) - focuses on more advanced features of the Go language.
+* [`performance`](#performance) - focuses on showing performance differences in implementations using benchmarks.
+* [`gotcha`](#gotcha) - shows a couple of common mistakes made by developers new to Go.
+* [`random`](#random) - a collection of examples collected from around the internet in no particular grouping
+
+## Intro
+
+### Environment variables
 
 ```sh
 export PATH=$PATH:$(go env GOPATH)/bin
 export GOPATH=$(go env GOPATH)
 ```
 
-### New program
+#### New program
 
 ```sh
 mkdir -p $GOPATH/src/github.com/user
@@ -62,7 +73,7 @@ $ hello
 Hello, world.
 ```
 
-## Structure
+### Structure
 
 ```sh
 bin/
@@ -92,7 +103,7 @@ src/
 
 ```
 
-## How do I download remote packages?
+### How do I download remote packages?
 
 To get all dependencies for the current package:
 
@@ -115,7 +126,7 @@ All downloaded packages end up in `$GOPATH/src`. They are also automatically bui
 go get -d github.com/user/package
 ```
 
-## Dep
+### Dep
 
 ```sh
 $ dep init
@@ -139,7 +150,7 @@ $ dep ensure
 
 Careful: this command removes packages that are not used anymore and adds packages that have been imported in the meantime, but it does niot update the Gopkg.toml file! To update Gopkg.toml you need to use `-add`.
 
-### Gopkg.toml
+#### Gopkg.toml
 Gopkg.toml files contain five basic types of rules. The Gopkg.toml docs explain them in detail, but here's an overview:
 
 * *required*, which are mostly equivalent to import statements in .go files, except that it's OK to list a main package here
@@ -148,7 +159,7 @@ Gopkg.toml files contain five basic types of rules. The Gopkg.toml docs explain 
 * *[[override]]*, stanzas identical to [[constraint]] except that only the current project can express them and they supersede [[constraint]] in both the current project and dependencies
 * *[prune]*, global and per-project rules that govern what kinds of files should be removed from vendor/
 
-### Links 
+#### Links 
 
 * https://golang.org/
 * https://golang.github.io/dep/

@@ -20,7 +20,7 @@ func CreateHash(plainText string) (hashText string) {
 	return
 }
 
-// Compare hash to plain text, if same it will no return error
+// Compare hash to plain text, if same it will not return error
 // If not same, it will return error
 func CompareHash(plainText string, hashText string) (err error) {
 	preparedPlainText := preparePasswordInput(plainText)
@@ -52,13 +52,12 @@ func main() {
 
 	for i := 0; i < 10; i++ {
 		hashedPassword := CreateHash(password) // should return different random string
-		err := CompareHash(password, hashedPassword)
-		if err == nil {
-			// You'll see that there is no same hash in each iteration
-			fmt.Printf("%s is an hash version of %s \n", hashedPassword, password)
-		} else {
+		if err := CompareHash(password, hashedPassword); err != nil {
 			fmt.Println(err.Error())
+			continue
 		}
+		// You'll see that there is no same hash in each iteration
+		fmt.Printf("%s is an hash version of %s \n", hashedPassword, password)
 	}
 
 	// Real case

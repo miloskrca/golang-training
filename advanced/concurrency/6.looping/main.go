@@ -20,4 +20,22 @@ func main() {
 
 // the runtime scheduler is optimizing the code,
 // so the goroutines are not blocked when executing the logic and it schedules IO for later
-// i := i
+
+/*
+
+for i := 0; i <= 9; i++ {
+	go func(i int) {
+		fmt.Println(i)
+		wg.Done()
+	}(i)
+}
+
+for i := 0; i <= 9; i++ {
+	i := i
+	go func() {
+		fmt.Println(i)
+		wg.Done()
+	}()
+}
+
+*/
