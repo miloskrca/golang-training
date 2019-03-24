@@ -1,21 +1,26 @@
-package main
+package main_test
 
 import "testing"
 
+func copy(sc string) string {
+	ss := sc
+	return ss
+}
+
+func reference(sr string) *string {
+	ss := &sr
+	return ss
+}
 func BenchmarkAllocateStack(b *testing.B) {
-	b.ReportAllocs()
 	s := "string"
 	for i := 0; i < b.N; i++ {
-		ss := copy(s)
-		_ = ss
+		copy(s)
 	}
 }
 
 func BenchmarkAllocateHeap(b *testing.B) {
-	b.ReportAllocs()
 	s := "string"
 	for i := 0; i < b.N; i++ {
-		ss := reference(s)
-		_ = ss
+		reference(s)
 	}
 }

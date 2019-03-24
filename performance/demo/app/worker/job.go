@@ -13,6 +13,7 @@ Example message:
 
 */
 
+// Job is one job that a worker works on
 type Job struct {
 	Type    string
 	Payload struct {

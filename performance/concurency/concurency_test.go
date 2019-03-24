@@ -5,28 +5,37 @@ import (
 	"testing"
 )
 
-func BenchmarkNoGoroutines(b *testing.B) {
-	results := make(map[int]int, 1024)
+var size = 24
+
+func fib(n int) int {
+	if n <= 1 {
+		return n
+	}
+	return fib(n-1) + fib(n-2)
+}
+
+func BenchmarkSequential(b *testing.B) {
+	results := make(map[int]int, size)
 	for i := 0; i < b.N; i++ {
-		for index := 0; index < 1024; index++ {
-			results[index] = index * index
+		for j := 0; j < size; j++ {
+			results[j] = fib(j)
 		}
 	}
 }
 
-func BenchmarkGoroutines(b *testing.B) {
-	results := make(map[int]int, 1024)
+func BenchmarkMutex(b *testing.B) {
+	results := make(map[int]int, size)
 	for i := 0; i < b.N; i++ {
 		var mutex sync.Mutex
 		var wg sync.WaitGroup
-		wg.Add(1024)
-		for index := 0; index < 1024; index++ {
+		wg.Add(size)
+		for j := 0; j < size; j++ {
 			go func(j int) {
 				mutex.Lock()
-				results[j] = j * j
+				results[j] = fib(j)
 				mutex.Unlock()
 				wg.Done()
-			}(index)
+			}(j)
 		}
 		wg.Wait()
 	}
@@ -34,18 +43,18 @@ func BenchmarkGoroutines(b *testing.B) {
 
 func BenchmarkChannels(b *testing.B) {
 	type res struct {
-		key, value int
+		key   int
+		value int
 	}
-	results := make(map[int]int, 1024)
+	results := make(map[int]int, size)
 	resultCh := make(chan res)
-	// resultCh := make(chan res, 1024)
 	for i := 0; i < b.N; i++ {
-		for index := 0; index < 1024; index++ {
+		for j := 0; j < size; j++ {
 			go func(j int) {
-				resultCh <- res{j, j * j}
-			}(index)
+				resultCh <- res{j, fib(j)}
+			}(j)
 		}
-		for index := 0; index < 1024; index++ {
+		for index := 0; index < size; index++ {
 			r := <-resultCh
 			results[r.key] = r.value
 		}
@@ -55,8 +64,14 @@ func BenchmarkChannels(b *testing.B) {
 func BenchmarkSyncMap(b *testing.B) {
 	var results sync.Map
 	for i := 0; i < b.N; i++ {
-		for index := 0; index < 1024; index++ {
-			results.Store(index, index*index)
+		var wg sync.WaitGroup
+		wg.Add(size)
+		for j := 0; j < size; j++ {
+			go func(j int) {
+				results.Store(j, fib(j))
+				wg.Done()
+			}(j)
 		}
+		wg.Wait()
 	}
 }

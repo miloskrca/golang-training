@@ -12,8 +12,6 @@ func reference(sr string) *string {
 
 func main() {
 	s := "string"
-	ss := copy(s)
-	sss := reference(s)
-	_ = ss
-	_ = sss
+	copy(s)
+	reference(s)
 }

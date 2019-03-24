@@ -24,7 +24,7 @@ type RabbitMQConf struct {
 }
 
 type RabbitMQ struct {
-	conn   *amqp.Connection
+	ch     *amqp.Channel
 	config RabbitMQConf
 	send   chan Message
 }
@@ -39,36 +39,35 @@ func New(config RabbitMQConf) (*RabbitMQ, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &RabbitMQ{conn, config, make(chan Message)}, nil
-}
-
-func (service *RabbitMQ) Start() {
-	ch, err := service.conn.Channel()
+	ch, err := conn.Channel()
 	if err != nil {
 		log.Printf("could not open channel: %v", err)
-		return
+		return nil, err
 	}
 
-	err = service.setupExchange(ch)
-	if err != nil {
+	service := &RabbitMQ{ch, config, make(chan Message)}
+
+	if err = service.setupExchange(); err != nil {
 		log.Printf("could not declare exchange, opening the channel again: %v", err)
-		ch, err = service.conn.Channel()
+		service.ch, err = conn.Channel()
 		if err != nil {
 			log.Printf("could not open channel after failed exchange declaration: %v", err)
-			return
+			return nil, err
 		}
 	}
 
-	err = service.setupQueues(ch)
-	if err != nil {
+	if err = service.setupQueues(); err != nil {
 		log.Printf("could not setup queues: %v", err)
-		return
+		return nil, err
 	}
+	return service, nil
+}
 
+func (service *RabbitMQ) Run() {
 	for msg := range service.send {
 		// log.Printf("sending message of type %s to %s: %s", msg.Type, msg.QueueName, string(msg.Payload))
 
-		err = ch.Publish(
+		err := service.ch.Publish(
 			service.config.Exchange, // exchange
 			msg.QueueName,           // routing key
 			false,                   // mandatory
@@ -92,17 +91,17 @@ func (service *RabbitMQ) Stop() {
 	close(service.send)
 }
 
-func (service *RabbitMQ) setupExchange(ch *amqp.Channel) error {
-	err := ch.ExchangeDeclare(service.config.Exchange, "topic", true, false, false, false, nil)
+func (service *RabbitMQ) setupExchange() error {
+	err := service.ch.ExchangeDeclare(service.config.Exchange, "topic", true, false, false, false, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (service *RabbitMQ) setupQueues(ch *amqp.Channel) error {
+func (service *RabbitMQ) setupQueues() error {
 	for _, queueName := range service.config.Queues {
-		_, err := ch.QueueDeclare(queueName, true, false, false, false, map[string]interface{}{
+		_, err := service.ch.QueueDeclare(queueName, true, false, false, false, map[string]interface{}{
 			"x-dead-letter-exchange":    deadLetterExchange,
 			"x-dead-letter-routing-key": fmt.Sprintf(deadLetterRoutingKeyFormat, queueName),
 		})
@@ -110,7 +109,7 @@ func (service *RabbitMQ) setupQueues(ch *amqp.Channel) error {
 			return fmt.Errorf("could not declare queue: %v", err)
 		}
 
-		if err := ch.QueueBind(queueName, queueName, service.config.Exchange, false, nil); err != nil {
+		if err := service.ch.QueueBind(queueName, queueName, service.config.Exchange, false, nil); err != nil {
 			log.Printf("could not bind queue to exchange: %v", err)
 			return fmt.Errorf("could not bind queue: %v", err)
 		}

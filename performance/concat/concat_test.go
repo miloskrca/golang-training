@@ -38,19 +38,19 @@ func join() string {
 
 func BenchmarkStringConcatenation(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_ = concat()
+		concat()
 	}
 }
 
 func BenchmarkStringBuffer(b *testing.B) {
 	buf := bytes.NewBuffer(make([]byte, 0, len(bulbasur)+len(ivysaur)+len(venasaur)+len(squirtle)+len(wartortle)+len(blastoise)))
 	for i := 0; i < b.N; i++ {
-		_ = buffer(buf)
+		buffer(buf)
 	}
 }
 
 func BenchmarkStringJoin(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_ = join()
+		join()
 	}
 }

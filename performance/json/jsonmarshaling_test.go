@@ -16,13 +16,13 @@ var object = struct {
 
 func BenchmarkMarshal(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_, _ = json.Marshal(object)
+		json.Marshal(object)
 	}
 }
 
 func BenchmarkFMT(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_ = fmt.Sprintf(`
+		fmt.Sprintf(`
 		{
 			"name": "%s",
 			"lastname": "%s"

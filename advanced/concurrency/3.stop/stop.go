@@ -25,20 +25,16 @@ func main() {
 
 	timeout := time.After(6 * time.Second)
 
-	func() {
-		for {
-			select {
-			case msg1 := <-c1:
-				fmt.Println("Message 1", msg1)
-			case msg2 := <-c2:
-				fmt.Println("Message 2", msg2)
-			// case <-time.After(6 * time.Second):
-			case <-timeout:
-				fmt.Println("stopping after 6 seconds")
-				return
-			}
+	for {
+		select {
+		case msg1 := <-c1:
+			fmt.Println("Message 1", msg1)
+		case msg2 := <-c2:
+			fmt.Println("Message 2", msg2)
+		// case <-time.After(6 * time.Second):
+		case <-timeout:
+			fmt.Println("stopping after 6 seconds")
+			return
 		}
-	}()
-
-	fmt.Println("done")
+	}
 }

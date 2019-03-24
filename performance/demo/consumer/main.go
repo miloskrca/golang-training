@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/miloskrca/golang-training/performance/demo/app/rabbitmq"
 	"github.com/streadway/amqp"
@@ -30,7 +31,7 @@ func main() {
 
 	var queueNames []string
 	for i := 0; i < numQueues; i++ {
-		queueNames = append(queueNames, fmt.Sprintf("client_%d", i))
+		queueNames = append(queueNames, fmt.Sprintf("consumer_%d", i))
 	}
 	config := RabbitMQConf{
 		Hostname: "localhost",
@@ -62,14 +63,14 @@ func main() {
 		go runConsumer(queue, consumer, msgReceivedCh)
 	}
 
-	printStatus(status)
+	printStatus(status, numQueues)
 	for msgReceivedForConsumer := range msgReceivedCh {
 		consumerCnt, found := status[msgReceivedForConsumer]
 		if !found {
 			status[msgReceivedForConsumer] = 0
 		}
 		status[msgReceivedForConsumer] = consumerCnt + 1
-		printStatus(status)
+		printStatus(status, numQueues)
 	}
 }
 
@@ -97,10 +98,22 @@ func createConsumers(ch *amqp.Channel, queues []string) (map[string]<-chan amqp.
 	return consumers, nil
 }
 
-func printStatus(status map[string]int) {
+func printStatus(status map[string]int, numQueues int) {
 	var total int
-	for _, count := range status {
-		total = total + count
+	if numQueues > 10 {
+		for _, count := range status {
+			total = total + count
+		}
+		fmt.Printf("\033[2K\rTotal received messages: %d", total)
+		return
 	}
-	fmt.Printf("\033[2K\rTotal received messages: %d", total)
+
+	var buff strings.Builder
+	buff.WriteString("\033[2J")
+	for consumer, count := range status {
+		total = total + count
+		buff.WriteString(fmt.Sprintf("%s received messages: %d\n", consumer, count))
+	}
+	buff.WriteString(fmt.Sprintf("Total received messages: %d\n", total))
+	fmt.Print(buff.String())
 }
