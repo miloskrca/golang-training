@@ -9,7 +9,7 @@ import (
 func main() {
 	done := make(chan struct{})
 	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, 4*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
 	go do(ctx, done)
 	<-done
@@ -22,7 +22,7 @@ func do(ctx context.Context, done chan struct{}) {
 		fmt.Println("Done after 3 seconds")
 	// If the context finishes before we could get the result, exit early
 	case <-ctx.Done():
-		fmt.Println("Context done after 2 seconds")
+		fmt.Println("Context done")
 	}
 	done <- struct{}{}
 }

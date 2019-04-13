@@ -25,6 +25,5 @@ func main() {
 	go pinger(c)
 	go printer(c)
 
-	var input string
-	fmt.Scanln(&input)
+	fmt.Scanln()
 }

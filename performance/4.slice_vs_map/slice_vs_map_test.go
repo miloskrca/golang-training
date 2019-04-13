@@ -31,11 +31,12 @@ func BenchmarkSliceWrite(b *testing.B) {
 }
 
 func BenchmarkMapRead(b *testing.B) {
+	var value int
 	aMap := make(map[int]int)
 	for _, elem := range testSet {
 		aMap[elem] = elem
 	}
-	var value int
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		for _, elem := range testSet {
 			value = value + aMap[elem]
@@ -49,6 +50,7 @@ func BenchmarkSliceRead(b *testing.B) {
 	for _, elem := range testSet {
 		slice = append(slice, elem)
 	}
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		for _, elem := range testSet {
 			for _, item := range slice {
