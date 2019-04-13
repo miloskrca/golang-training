@@ -7,7 +7,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/miloskrca/golang-training/performance/demo/app/rabbitmq"
+	"github.com/miloskrca/golang-training/performance/8.demo/app/rabbitmq"
 	"github.com/streadway/amqp"
 )
 

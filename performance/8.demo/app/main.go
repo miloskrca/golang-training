@@ -7,14 +7,12 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-	"runtime/pprof"
-	"time"
 
-	"github.com/miloskrca/golang-training/performance/demo/app/dispatcher"
-	"github.com/miloskrca/golang-training/performance/demo/app/rabbitmq"
-	"github.com/miloskrca/golang-training/performance/demo/app/worker"
-	// _ "net/http/pprof"
+	_ "net/http/pprof"
+
+	"github.com/miloskrca/golang-training/performance/8.demo/app/dispatcher"
+	"github.com/miloskrca/golang-training/performance/8.demo/app/rabbitmq"
+	"github.com/miloskrca/golang-training/performance/8.demo/app/worker"
 )
 
 var (
@@ -24,18 +22,7 @@ var (
 
 func main() {
 	flag.IntVar(&numQueues, "q", 10, "num of queues")
-	flag.StringVar(&cpuprofile, "cpuprofile", "", "write cpu profile to file")
 	flag.Parse()
-
-	// collect cpu profile while running
-	if cpuprofile != "" {
-		f, err := os.Create(cpuprofile)
-		if err != nil {
-			log.Fatal(err)
-		}
-		pprof.StartCPUProfile(f)
-		defer pprof.StopCPUProfile()
-	}
 
 	// create a list of queue names that will be used by consumers
 	var queueNames []string
@@ -82,16 +69,6 @@ func main() {
 		log.Println("server started")
 		log.Fatal(http.ListenAndServe(":8000", nil))
 	}()
-
-	// if we are profiling stop after a timeout
-	if cpuprofile != "" {
-		go func() {
-			time.Sleep(60 * time.Second)
-			log.Println("60s expired, stopping")
-			d.Stop()
-			close(results)
-		}()
-	}
 
 	// for every result a worker did send a RabbitMQ message
 	for msg := range results {

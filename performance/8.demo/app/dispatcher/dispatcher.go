@@ -1,8 +1,6 @@
 package dispatcher
 
-import (
-	"github.com/miloskrca/golang-training/performance/demo/app/worker"
-)
+import "github.com/miloskrca/golang-training/performance/8.demo/app/worker"
 
 // Dispatcher schedules every incoming job to all registered workers
 type Dispatcher struct {

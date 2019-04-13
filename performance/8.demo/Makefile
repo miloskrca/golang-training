@@ -14,12 +14,8 @@ load:
 consume:
 	go run consumer/main.go -q $Q
 
-pprof:
-	go build -o bin app/main.go
-	./bin -q $Q -cpuprofile profile.cpu
+pprof-heap:
+	pprof -http :3000 http://localhost:8000/debug/pprof/heap
 
-pprof-top:
-	pprof -top bin profile.cpu
-
-pprof-web:
-	pprof -http=localhost:8888 bin profile.cpu
+pprof-cpu:
+	pprof -http :3000 http://localhost:8000/debug/pprof/profile?seconds=30

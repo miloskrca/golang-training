@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/miloskrca/golang-training/performance/demo/app/rabbitmq"
+	"github.com/miloskrca/golang-training/performance/8.demo/app/rabbitmq"
 )
 
 // Res is the result of the workers work on a Job
